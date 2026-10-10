@@ -1,3 +1,7 @@
+# ---------------------------------------------------------------------------
+# Go
+# ---------------------------------------------------------------------------
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -5,61 +9,64 @@
 *.so
 *.dylib
 
+# Generated binaries
+**/bin
+dist/**
+
 # Test binary, built with `go test -c`
 *.test
 
-# Output of the go coverage tool, specifically when used with LiteIDE
+# Coverage output (make coverage; *.out also covers Go's default coverage.out)
 *.out
+coverage.txt
 
 # Go workspace file
 go.work
 go.work.sum
 
-# env file
-.env
+# ---------------------------------------------------------------------------
+# Local configuration (may contain MESHERY_API_TOKEN)
+# ---------------------------------------------------------------------------
 
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+*.env
+/config.yaml
+*.local.yaml
 
-# Test binary, build with `go test -c`
-*.test
+# ---------------------------------------------------------------------------
+# Editors and OS
+# ---------------------------------------------------------------------------
 
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
+**/.idea
+.vscode/**
+.cursorignore
+*.config
+.DS_Store
+default.profraw
 
+# ---------------------------------------------------------------------------
 # UI
+# ---------------------------------------------------------------------------
+
 **/node_modules/
 **/out/
 **/.next/
 */npm-debug.log
 yarn.lock
 
+# ---------------------------------------------------------------------------
 # Docs
+# ---------------------------------------------------------------------------
+
 docs/_site
 docs/.sass-cache
 docs/.jekyll-metadata
 docs/.jekyll-cache
 .ruby-version
 
-# images
-default.profraw
-.DS_Store
-
-# Generated binaries
-**/bin
-dist/**
-
-# IDE
-**/.idea
-.vscode/**
-.cursorignore
-*.config
-
+# ---------------------------------------------------------------------------
 # Meshery
+# ---------------------------------------------------------------------------
+
 **errorutil_analyze_errors.json
 **errorutil_analyze_summary.json
 **errorutil_errors_export.json

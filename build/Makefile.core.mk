@@ -15,12 +15,12 @@
 #-----------------------------------------------------------------------------
 # Global Variables
 #-----------------------------------------------------------------------------
-GIT_VERSION	= $(shell git describe --tags `git rev-list --tags --max-count=1`)
-GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
+GIT_VERSION   := $(shell git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null)
+GIT_COMMITSHA := $(shell git rev-list -1 HEAD 2>/dev/null)
 GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
 REMOTE_PROVIDER="Meshery"
 LOCAL_PROVIDER="None"
-GOVERSION = 1.23
+GOVERSION = 1.26.4
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 KEYS_PATH="../../server/permissions/keys.csv"
