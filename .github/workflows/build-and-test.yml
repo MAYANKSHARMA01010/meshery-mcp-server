@@ -1,50 +1,40 @@
 name: Build and Test
+
 on:
-  push:
-    branches:
-      - "master"
-    paths:
-      - "**.go"
-      - "go.mod"
-      - "go.sum"
-      - ".golangci.yml"
-      - ".github/workflows/build-and-test.yml"
   pull_request:
-    branches:
-      - "master"
-    paths:
-      - "**.go"
-      - "go.mod"
-      - "go.sum"
-      - ".golangci.yml"
-      - ".github/workflows/build-and-test.yml"
+    branches: [master]
+    paths-ignore: ["**/*.md", "LICENSE"]
+  push:
+    branches: [master]
+    paths-ignore: ["**/*.md", "LICENSE"]
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   lint:
     name: golangci-lint
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-go@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: go.mod
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v9
+      - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
-          version: v2.14
-          args: --config=.golangci.yml --timeout=10m
+          version: v2.14.0
 
   test:
     name: Build and unit tests
     runs-on: ubuntu-24.04
-    needs: lint
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-go@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: go.mod
       - name: Verify go.mod is tidy
@@ -52,13 +42,22 @@ jobs:
           go mod tidy
           git diff --exit-code go.mod go.sum
       - name: Build
-        run: go build ./...
-      - name: Run unit tests with coverage
-        run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
+        run: make build
+      - name: Test
+        run: make coverage
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery-extensions/meshery-mcp-server'
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           files: ./coverage.txt
           flags: unittests
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  docker:
+    name: Test Docker Image Build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Build and smoke-test the image
+        # stdin is closed, so the server starts, finds no input, and exits.
+        run: make docker-run < /dev/null
