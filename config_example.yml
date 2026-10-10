@@ -1,0 +1,23 @@
+# Example configuration for meshery-mcp-server.
+#
+# Usage:
+#   cp config_example.yml config.local.yaml    # *.local.yaml is gitignored
+#   meshery-mcp-server --config config.local.yaml
+#
+# Every setting is optional. Precedence, lowest to highest:
+#   built-in defaults  <  this file  <  environment variables
+
+meshery:
+  # Meshery server to talk to.            Env: MESHERY_SERVER_URL
+  # Inside a container, localhost is the container itself; use
+  # http://host.docker.internal:9081 to reach Meshery on the host.
+  url: http://localhost:9081
+
+  # Meshery provider token.               Env: MESHERY_API_TOKEN
+  # Prefer the environment variable. If you put the token here, keep the
+  # file private (chmod 600) and never commit it.
+  # token: <your-meshery-token>
+
+log:
+  # One of: debug, info, warn, error.     Env: LOG_LEVEL
+  level: info
